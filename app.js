@@ -16,7 +16,6 @@ mongoose.set('useUnifiedTopology', true);
 mongoose.Promise = global.Promise
 mongoose.connect(config.database)
 
-
 mongoose.connection.on('connected', () => console.log('connected to database => '+ config.database ) );
 mongoose.connection.on('error', (err)=> console.log('Database error: ' + err));
 
