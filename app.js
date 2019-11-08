@@ -1,11 +1,24 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+var createError   = require('http-errors');
+var express       = require('express');
+var path          = require('path');
+var cookieParser  = require('cookie-parser');
+var logger        = require('morgan');
+const mongoose    = require('mongoose');
+const config      = require('./config/database');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var indexRouter   = require('./routes/index');
+var usersRouter   = require('./routes/users');
+
+//Added to surpress warning @OYEWOLE
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useUnifiedTopology', true);
+
+mongoose.Promise = global.Promise
+mongoose.connect(config.database)
+
+
+mongoose.connection.on('connected', () => console.log('connected to database => '+ config.database ) );
+mongoose.connection.on('error', (err)=> console.log('Database error: ' + err));
 
 var app = express();
 
