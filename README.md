@@ -1,4 +1,6 @@
-#Addenda take home challenge
+#Addenda
+Addenda take home challenge
+
 Create a RESTful API in NodeJS using MongoDB database for a Phonebook where a user manages his/her contacts.
 
 API calls:
