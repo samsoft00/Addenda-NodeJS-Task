@@ -10,9 +10,7 @@ const ContactSchema = new Schema({
 		state: {type: String,trim: true},
 		country: {type: String,trim: true},
 		postal_code: {type: String,trim: true}
-	},
-	updated_at: {type: Date, default: Date.now},
-	created_at: {type: Date, default: Date.now}
-})
+	}
+}, {timestamps: true})
 
 module.exports = mongoose.model('Contact', ContactSchema)

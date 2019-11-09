@@ -1,9 +1,11 @@
-var express 	= require('express')
-var router 		= express.Router()
-const _ 			= require('lodash')
-const Joi 		= require('@hapi/joi')
+var express 		= require('express')
+var router 			= express.Router()
+const _ 				= require('lodash')
+const Joi 			= require('@hapi/joi')
 const JoiHelper	= require('../helper/joi.helper')
-const User 		= require('../models/user.model')
+const dbConfig 	= require('../config/database')
+const jwt 			= require('jsonwebtoken')
+const User 			= require('../models/user.model')
 
 /* POST user login. */
 router.post('/login', function(req, res) {
@@ -14,7 +16,17 @@ router.post('/login', function(req, res) {
 		const {error, value} = Joi.validate(payload,  JoiHelper.validateLogin())
 		if(error) throw new Error(error.message)
 
+		User.findOne({email: value.email}, function(err, user) {
+			if(err) throw new Error(err.message)
+			if(user === null) throw new Error('Invalid credentials')
 
+			if(!user.validatePassword(value.password)){
+				throw new Error('Invalid credentials')
+			}
+
+			const token = jwt.sign(user, dbConfig.secret, {expiresIn: 604800})
+			return res.status(200).json({token})
+		})
 
 	} catch (error) {
 		return res.status(400).json({msg: error.message})
@@ -30,7 +42,10 @@ router.post('/register', async function(req, res) {
 		const {error, value} = Joi.validate(payload, JoiHelper.validateReg())
 		if(error) throw new Error(error.message)
 
-		let user = new User(value)
+		const {username, email, password} = value
+
+		let user = new User({username, email})
+		user.setPassword(password)
 		user.save((err, user) => {
 			if(err){
 				return res.status(400).json({msg: err.message})

@@ -13,6 +13,7 @@ var usersRouter   = require('./routes/users.route')
 
 mongoose.set('useNewUrlParser', true)
 mongoose.set('useUnifiedTopology', true)
+mongoose.set('useCreateIndex', true)
 
 mongoose.Promise = global.Promise
 mongoose.connect(config.database)
