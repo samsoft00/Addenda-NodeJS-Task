@@ -2,7 +2,7 @@
 # Maven, Node, Python, Rails
 
 # Maven
-
+.vscode
 target/
 pom.xml.tag
 pom.xml.releaseBackup
