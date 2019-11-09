@@ -3,8 +3,6 @@ var router 			= express.Router()
 const _ 				= require('lodash')
 const Joi 			= require('@hapi/joi')
 const JoiHelper	= require('../helper/joi.helper')
-const dbConfig 	= require('../config/database')
-const jwt 			= require('jsonwebtoken')
 const User 			= require('../models/user.model')
 
 /* POST user login. */
@@ -17,15 +15,15 @@ router.post('/login', function(req, res) {
 		if(error) throw new Error(error.message)
 
 		User.findOne({email: value.email}, function(err, user) {
-			if(err) throw new Error(err.message)
-			if(user === null) throw new Error('Invalid credentials')
+			if(err) return res.status(400).json({msg: err.message})
+			if(user === null) return res.status(400).json({msg: 'Invalid credentials'})
 
 			if(!user.validatePassword(value.password)){
-				throw new Error('Invalid credentials')
+				return res.status(400).json({msg: 'Invalid credentials'})
 			}
 
-			const token = jwt.sign(user, dbConfig.secret, {expiresIn: 604800})
-			return res.status(200).json({token})
+			const data = user.toAuthJSON()
+			return res.status(200).json(data)
 		})
 
 	} catch (error) {
@@ -36,22 +34,19 @@ router.post('/login', function(req, res) {
 
 /* POST register user */
 router.post('/register', async function(req, res) {
-	const payload = _.pick(req.body, ['username', 'email', 'password', 'password_confirmation'])
+	const data = _.pick(req.body, ['username', 'email', 'password', 'password_confirmation'])
 
 	try {
-		const {error, value} = Joi.validate(payload, JoiHelper.validateReg())
+		const {error, payload} = Joi.validate(data, JoiHelper.validateReg())
 		if(error) throw new Error(error.message)
 
-		const {username, email, password} = value
-
-		let user = new User({username, email})
-		user.setPassword(password)
+		let user = new User(data)
 		user.save((err, user) => {
 			if(err){
 				return res.status(400).json({msg: err.message})
 			}
 
-			res.status(200).json(user)
+			res.status(200).json(_.pick(user, ['_id', 'username', 'email', 'createdAt', 'updatedAt']))
 		})
 
 	} catch (error) {
