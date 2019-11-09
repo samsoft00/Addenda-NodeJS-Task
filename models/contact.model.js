@@ -11,8 +11,8 @@ const ContactSchema = new Schema({
 		country: {type: String,trim: true},
 		postal_code: {type: String,trim: true}
 	},
-	updated_at: {type: Date, default: Date.now()},
-	created_at: {type: Date, default: Date.now()}
+	updated_at: {type: Date, default: Date.now},
+	created_at: {type: Date, default: Date.now}
 })
 
 module.exports = mongoose.model('Contact', ContactSchema)

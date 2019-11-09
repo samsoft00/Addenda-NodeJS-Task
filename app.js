@@ -5,19 +5,22 @@ var cookieParser  = require('cookie-parser')
 var logger        = require('morgan')
 const mongoose    = require('mongoose')
 const config      = require('./config/database')
+const bodyParser 	= require('body-parser')
+const cors    		= require('cors')
 
 var indexRouter   = require('./routes/index')
-var usersRouter   = require('./routes/users')
+var usersRouter   = require('./routes/users.route')
 
-//Added to surpress warning @OYEWOLE
 mongoose.set('useNewUrlParser', true)
 mongoose.set('useUnifiedTopology', true)
 
 mongoose.Promise = global.Promise
 mongoose.connect(config.database)
 
-mongoose.connection.on('connected', () => console.log('connected to database => '+ config.database ) )
-mongoose.connection.on('error', (err)=> console.log('Database error: ' + err))
+const db = mongoose.connection
+
+db.on('connected', () => console.log('connected to database => '+ config.database ) )
+db.on('error', (err)=> console.error.bind(console, 'Database error: ' + err))
 
 var app = express()
 
@@ -26,8 +29,11 @@ app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'hbs')
 
 app.use(logger('dev'))
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false}))
+
+app.use(cors())
+
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
