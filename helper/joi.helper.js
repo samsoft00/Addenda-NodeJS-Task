@@ -9,6 +9,13 @@ module.exports = {
 			password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/).required().error(new Error('Password required')),
 			password_confirmation: Joi.any().valid(Joi.ref('password')).required().error(new Error('Password and confirm password must match'))
 		})
+	},
+
+	validateLogin(){
+		return Joi.object().keys({
+			email: Joi.string().email({ minDomainSegments: 2 }).error(new Error('Email address is required!')),
+			password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/).required().error(new Error('Password required'))
+		}).with('email', 'password')
 	}
 
 }
