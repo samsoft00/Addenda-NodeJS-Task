@@ -10,17 +10,21 @@ const cors    		= require('cors')
 
 var indexRouter   = require('./routes/index')
 var usersRouter   = require('./routes/users.route')
+var contactsRouter= require('./routes/contacts.route')
 
 mongoose.set('useNewUrlParser', true)
 mongoose.set('useUnifiedTopology', true)
 mongoose.set('useCreateIndex', true)
+mongoose.set('useFindAndModify', false)
 
 mongoose.Promise = global.Promise
 mongoose.connect(config.database)
 
 const db = mongoose.connection
 
+// eslint-disable-next-line no-console
 db.on('connected', () => console.log('connected to database => '+ config.database ) )
+// eslint-disable-next-line no-console
 db.on('error', (err)=> console.error.bind(console, 'Database error: ' + err))
 
 var app = express()
@@ -40,6 +44,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', indexRouter)
 app.use('/users', usersRouter)
+app.use('/contacts', contactsRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
