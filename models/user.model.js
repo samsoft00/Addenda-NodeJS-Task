@@ -17,7 +17,7 @@ const UserSchema = new Schema({
 	password: { type: String, trim: true},
 	salt: { type: String, trim: true },
 	contacts: [{ type: Schema.Types.ObjectId, ref: 'Contact' }]
-}, {timestamps: true})
+}, {timestamps: true, strict: true})
 
 let validatePassword = function(password){
 	var hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex')

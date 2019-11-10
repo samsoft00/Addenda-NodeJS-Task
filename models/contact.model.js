@@ -12,7 +12,7 @@ const ContactSchema = new Schema({
 	country: {type: String,trim: true},
 	postal_code: {type: String,trim: true},
 	user: { type: Schema.Types.ObjectId, ref: 'User' },
-}, {timestamps: true})
+}, {timestamps: true, strict: true})
 
 ContactSchema.plugin(mongoosePaginate)
 module.exports = mongoose.model('Contact', ContactSchema)
