@@ -1,3 +1,4 @@
+require('dotenv').config()
 var createError   = require('http-errors')
 var express       = require('express')
 var path          = require('path')
@@ -22,11 +23,6 @@ mongoose.connect(config.database)
 
 const db = mongoose.connection
 
-// eslint-disable-next-line no-console
-db.on('connected', () => console.log('connected to database => '+ config.database ) )
-// eslint-disable-next-line no-console
-db.on('error', (err)=> console.error.bind(console, 'Database error: ' + err))
-
 var app = express()
 
 // view engine setup
@@ -43,8 +39,8 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/', indexRouter)
-app.use('/users', usersRouter)
-app.use('/contacts', contactsRouter)
+app.use('/user', usersRouter)
+app.use('/contact', contactsRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -62,4 +58,4 @@ app.use(function(err, req, res) {
 	res.render('error')
 })
 
-module.exports = app
+module.exports = {app, db}
