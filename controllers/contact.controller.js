@@ -67,9 +67,34 @@ module.exports = {
 		let ipage       = parseInt( page || 1 )
 		let limit       = parseInt( pageSize || 25 )
 		let offset      = parseInt((ipage - 1), 10) * limit
+		let sortString  = {'createdAt': -1}
 
-		let contacts = await Contact.paginate({}, { offset, limit })
-		res.status(200).json(contacts)
+		let contactQuery = Contact.find({})
+			.sort(sortString)
+			.skip(offset)
+			.limit(limit)
+
+		let data = {
+			docs: await contactQuery.exec(),
+			count: await Contact.countDocuments({}).exec()
+		}
+
+		let result = {
+			docs: data.docs,
+			total: data.count,
+			pages: Math.ceil(data.count / limit) || 1,
+			limit: limit
+		}
+
+		if(offset){
+			result.offset = offset
+		}
+
+		if(page){
+			result.page = page
+		}
+
+		res.status(200).json(result)
 	}
 
 }

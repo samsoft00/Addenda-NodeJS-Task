@@ -4,7 +4,7 @@ const JoiHelper	= require('../helper/joi.helper')
 const User 			= require('../models/user.model')
 
 module.exports = {
-	async register(req, res){
+	async login(req, res){
 		try {
 			const payload = _.pick(req.body, ['email', 'password'])
 
@@ -26,7 +26,7 @@ module.exports = {
 		}
 	},
 
-	async login(req, res){
+	async register(req, res){
 		const data = _.pick(req.body, ['username', 'email', 'password', 'password_confirmation'])
 
 		try {
